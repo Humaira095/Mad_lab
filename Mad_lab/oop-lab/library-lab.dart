@@ -51,11 +51,26 @@ abstract class Borrowable {
   void giveBack();
 }
 
-// STEP 1: Book inherits LibraryItem and implements Borrowable.
-class Book extends LibraryItem implements Borrowable {
+// STEP 5: Mixin for reusable renewal functionality.
+mixin Renewable {
+  int renewals = 0;
+
+  bool renew(int limit) {
+    if (renewals >= limit) {
+      return false;
+    }
+
+    renewals++;
+    return true;
+  }
+}
+
+// STEP 1 and STEP 4: Book inherits LibraryItem,
+// uses Renewable, and implements Borrowable.
+class Book extends LibraryItem with Renewable implements Borrowable {
   final int pages;
 
-  // Step 4: false means the book is currently available.
+  // false means the book is currently available.
   bool _out = false;
 
   Book(super.title, super.year, this.pages);
@@ -66,7 +81,7 @@ class Book extends LibraryItem implements Borrowable {
   @override
   int lateFee(int days) => days * feePerDay;
 
-  // Step 4: Implement the Borrowable contract.
+  // Implement the Borrowable contract.
   @override
   bool get isAvailable => !_out;
 
@@ -81,7 +96,8 @@ class Book extends LibraryItem implements Borrowable {
   }
 }
 
-// STEP 2: Magazine inherits LibraryItem but is not Borrowable.
+// STEP 2: Magazine inherits LibraryItem.
+// It does not use Renewable.
 class Magazine extends LibraryItem {
   final int issue;
 
@@ -94,8 +110,8 @@ class Magazine extends LibraryItem {
   int lateFee(int days) => days * (feePerDay ~/ 2);
 }
 
-// STEP 3: DVD inherits LibraryItem but is not Borrowable.
-class Dvd extends LibraryItem {
+// STEP 3 and STEP 5: DVD inherits LibraryItem and uses Renewable.
+class Dvd extends LibraryItem with Renewable {
   final int minutes;
 
   Dvd(super.title, super.year, this.minutes);
@@ -197,18 +213,14 @@ void step4() {
 
   final Book book = mainBook();
 
-  // Check availability before borrowing.
   print('Step 4: available? ${book.isAvailable}');
 
-  // Borrow the book.
   book.borrow();
   print('Step 4: after borrow? ${book.isAvailable}');
 
-  // Return the book.
   book.giveBack();
   print('Step 4: after return? ${book.isAvailable}');
 
-  // Check which library items implement Borrowable.
   final List<LibraryItem> items = [
     book,
     mainMagazine(),
@@ -222,11 +234,44 @@ void step4() {
     );
   }
 
-  // Think: Extending Borrowable would make it a parent class rather than
-  // just a contract. Dart allows only one superclass, and Book already
-  // extends LibraryItem. implements lets Book keep LibraryItem as its
-  // superclass while supplying all Borrowable method implementations.
+  // Think: Dart allows only one superclass. Book already extends
+  // LibraryItem, so implements lets it fulfil Borrowable's contract.
 }
 
-// Steps 5–10: Complete these in later checkpoints.
+// STEP 5: Mixins and renewals.
+void step5() {
+  print('--- Step 5 ---');
+
+  final Book book = mainBook();
+  final Dvd dvd = mainDvd();
+  final Magazine magazine = mainMagazine();
+
+  // Try renewing the Book the seeded number of times.
+  for (int i = 1; i <= renewAttempts; i++) {
+    final bool success = book.renew(renewLimit);
+
+    print(
+      'Step 5: Book renewal attempt $i = $success '
+      '(total renewals: ${book.renewals})',
+    );
+  }
+
+  // Try renewing the DVD the seeded number of times.
+  for (int i = 1; i <= renewAttempts; i++) {
+    final bool success = dvd.renew(renewLimit);
+
+    print(
+      'Step 5: Dvd renewal attempt $i = $success '
+      '(total renewals: ${dvd.renewals})',
+    );
+  }
+
+  // Check which items use the Renewable mixin.
+  print('Step 5: Book renewable? ${book is Renewable}');
+  print('Step 5: Magazine renewable? ${magazine is Renewable}');
+  print('Step 5: Dvd renewable? ${dvd is Renewable}');
+
+  // Think: A mixin reuses functionality without becoming another
+  // superclass. Book and Dvd use Renewable; Magazine does not.
+}
 
