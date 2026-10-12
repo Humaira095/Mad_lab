@@ -228,6 +228,7 @@ void main() {
   step5();
   step6();
   step7();
+  step8();
 }
 
 void step1() {
@@ -323,4 +324,17 @@ void step7() {
   );
   // Think: extension syntax (72.rs) attaches the helper to the value and reads
   // naturally; the extension adds convenience without changing int itself.
+}
+
+
+void step8() {
+  print('--- Step 8 ---');
+  final Fine f1 = Fine(mainBook().lateFee(daysLate));
+  final Fine f2 = Fine(mainMagazine().lateFee(daysLate));
+  print('Step 8: $f1 + $f2 = ${f1 + f2}');
+  print('Step 8: first bigger? ${f1 > f2}');
+  print('Step 8: equal copies? ${f1 == Fine(f1.amount)}');
+  print('Step 8: set size = ${<Fine>{f1, Fine(f1.amount), f2}.length}');
+  // Think: == defines value equality, while hashCode locates values in hash
+  // collections. Equal objects must have equal hash codes for Set/Map behaviour.
 }
