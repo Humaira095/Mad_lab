@@ -1,0 +1,45 @@
+Seed: 9 (t=0, u=9)
+--- Step 1 ---
+Step 1: Software Testing (2013), 127 pages
+Step 1: stored as LibraryItem: Software Testing
+Step 1: runtimeType = Book
+--- Step 2 ---
+Step 2: Software Testing (2013), 127 pages
+Step 2: Dart Basics (1995), issue 10
+--- Step 3 ---
+Step 3: Book late fee for 6 days = 30
+Step 3: Magazine late fee for 6 days = 12
+Step 3: Dvd late fee for 6 days = 60
+--- Step 4 ---
+Step 4: available? true
+Step 4: after borrow? false
+Step 4: after return? true
+Step 4: Book borrowable? true
+Step 4: Magazine borrowable? false
+Step 4: Dvd borrowable? false
+--- Step 5 ---
+Step 5: renewed 1 of 11 attempts (limit 1)
+Step 5: renew once more? false
+Step 5: dvd can renew too? true
+--- Step 6 ---
+Step 6: member type = student (index 0)
+Step 6: max loans = 3
+Step 6: book fee 30 -> 15 after discount
+--- Step 7 ---
+Step 7: Rs 15
+Step 7: initials of "Software Testing" = ST
+Step 7: shelf fee for 6 days = Rs 102
+--- Step 8 ---
+Step 8: Fine(30) + Fine(12) = Fine(42)
+Step 8: first bigger? true
+Step 8: equal copies? true
+Step 8: set size = 2
+--- Step 9 ---
+Step 9: items created = 8
+Step 9: capped fee = 95 (cap 150)
+Step 9: const copies identical? true
+Step 9: new copies identical? false
+--- Step 10 ---
+Step 10: 4 items, 2 borrowable, 3 renewable
+Step 10: S9 (student) owes Fine(66)
+Step 10: over the cap? false
