@@ -230,6 +230,7 @@ void main() {
   step7();
   step8();
   step9();
+  step10();
 }
 
 void step1() {
@@ -354,4 +355,29 @@ void step9() {
   print('Step 9: new copies identical? ${identical(Fine(10), Fine(10))}');
   // Think: created is static, so it belongs to the LibraryItem class itself,
   // not to one object; it can be read/reset through LibraryItem.created.
+}
+
+void step10() {
+  print('--- Step 10 ---');
+  final List<LibraryItem> shelf = buildShelf();
+  final Member member = Member('S$seed', MemberType.values[seed % 3]);
+
+  final Fine total = shelf.fold(
+    const Fine(0),
+    (Fine sum, LibraryItem item) => sum + member.feeFor(item, daysLate),
+  );
+  final int borrowableCount = shelf
+      .where((LibraryItem item) => item is Borrowable)
+      .length;
+  final int renewableCount = shelf
+      .where((LibraryItem item) => item is Renewable)
+      .length;
+
+  print(
+    'Step 10: ${shelf.length} items, $borrowableCount borrowable, $renewableCount renewable',
+  );
+  print('Step 10: ${member.name} (${member.type.name}) owes $total');
+  print('Step 10: over the cap? ${total > Fine(feeCap)}');
+  // Think: one loop works because lateFee() is polymorphic: each subclass
+  // supplies its own fee formula through the same LibraryItem interface.
 }
