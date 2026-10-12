@@ -6,8 +6,8 @@ const String rollNo = 'YOUR-ROLL-NO-HERE'; // Replace with your actual roll numb
 
 // ===== Seeded settings (generated from YOUR roll number). Do not edit. =====
 final int seed = int.parse(rollNo.substring(rollNo.length - 2));
-final int t = seed ~/ 10; // tens digit
-final int u = seed % 10; // units digit
+final int t = seed ~/ 10;
+final int u = seed % 10;
 
 const List<String> titles = [
   'Dart Basics',
@@ -32,23 +32,31 @@ final int renewAttempts = 2 + u;
 final int shelfSize = 3 + u % 4;
 // ==========================================================================
 
-// STEP 1–3: Abstract classes and inheritance.
-
+// STEP 3: Abstract parent class.
 abstract class LibraryItem {
   final String title;
   final int year;
 
   LibraryItem(this.title, this.year);
 
-  // Step 2: The parent provides the common description.
   String describe() => '$title ($year)';
 
-  // Step 3: Every concrete subclass must implement this method.
   int lateFee(int days);
 }
 
-class Book extends LibraryItem {
+// STEP 4: Contract for items that can be borrowed.
+abstract class Borrowable {
+  bool get isAvailable;
+  void borrow();
+  void giveBack();
+}
+
+// STEP 1: Book inherits LibraryItem and implements Borrowable.
+class Book extends LibraryItem implements Borrowable {
   final int pages;
+
+  // Step 4: false means the book is currently available.
+  bool _out = false;
 
   Book(super.title, super.year, this.pages);
 
@@ -57,8 +65,23 @@ class Book extends LibraryItem {
 
   @override
   int lateFee(int days) => days * feePerDay;
+
+  // Step 4: Implement the Borrowable contract.
+  @override
+  bool get isAvailable => !_out;
+
+  @override
+  void borrow() {
+    _out = true;
+  }
+
+  @override
+  void giveBack() {
+    _out = false;
+  }
 }
 
+// STEP 2: Magazine inherits LibraryItem but is not Borrowable.
 class Magazine extends LibraryItem {
   final int issue;
 
@@ -71,6 +94,7 @@ class Magazine extends LibraryItem {
   int lateFee(int days) => days * (feePerDay ~/ 2);
 }
 
+// STEP 3: DVD inherits LibraryItem but is not Borrowable.
 class Dvd extends LibraryItem {
   final int minutes;
 
@@ -83,18 +107,18 @@ class Dvd extends LibraryItem {
   int lateFee(int days) => days * feePerDay * 2;
 }
 
-// Step 1: Create a Book using the seeded settings.
+// Create the seeded Book.
 Book mainBook() {
   return Book(titles[u], yearOf(u), 100 + 3 * seed);
 }
 
-// Step 2: Create a Magazine using the seeded settings.
+// Create the seeded Magazine.
 Magazine mainMagazine() {
   final int i = (u + 1) % 10;
   return Magazine(titles[i], yearOf(i), 1 + (t + u) % 12);
 }
 
-// Step 3: Create a DVD using the seeded settings.
+// Create the seeded DVD.
 Dvd mainDvd() {
   final int i = (u + 2) % 10;
   return Dvd(titles[i], yearOf(i), 90 + seed % 40);
@@ -125,10 +149,8 @@ void step1() {
   print('Step 1: stored as LibraryItem: ${item.title}');
   print('Step 1: runtimeType = ${item.runtimeType}');
 
-  // Think: item.pages is a compile error because the variable is declared
-  // as LibraryItem, which does not declare a pages property.
-  // The actual object is a Book, but its extra property is not available
-  // through the LibraryItem type.
+  // Think: item.pages is a compile error because its declared type is
+  // LibraryItem, and LibraryItem does not declare a pages property.
 }
 
 // STEP 2: super and method overriding.
@@ -138,9 +160,8 @@ void step2() {
   print('Step 2: ${mainBook().describe()}');
   print('Step 2: ${mainMagazine().describe()}');
 
-  // Think: If describe() were misspelled as descibe(), Dart would not
-  // override the parent's method. The misspelled method would be separate.
-  // Using @override helps Dart detect this kind of mistake.
+  // Think: If describe() were misspelled as descibe(), it would not
+  // override the parent's method. @override helps catch this mistake.
 }
 
 // STEP 3: Abstract classes and late fees.
@@ -166,7 +187,46 @@ void step3() {
     '${dvd.lateFee(daysLate)}',
   );
 
-  // Think: LibraryItem cannot be instantiated directly because it is
-  // abstract. It declares lateFee() without providing its implementation.
-  // Concrete subclasses such as Book, Magazine, and Dvd must implement it.
+  // Think: An abstract class cannot be instantiated directly.
+  // Its abstract lateFee() method must be implemented by subclasses.
 }
+
+// STEP 4: implements and the Borrowable contract.
+void step4() {
+  print('--- Step 4 ---');
+
+  final Book book = mainBook();
+
+  // Check availability before borrowing.
+  print('Step 4: available? ${book.isAvailable}');
+
+  // Borrow the book.
+  book.borrow();
+  print('Step 4: after borrow? ${book.isAvailable}');
+
+  // Return the book.
+  book.giveBack();
+  print('Step 4: after return? ${book.isAvailable}');
+
+  // Check which library items implement Borrowable.
+  final List<LibraryItem> items = [
+    book,
+    mainMagazine(),
+    mainDvd(),
+  ];
+
+  for (final LibraryItem item in items) {
+    print(
+      'Step 4: ${item.runtimeType} borrowable? '
+      '${item is Borrowable}',
+    );
+  }
+
+  // Think: Extending Borrowable would make it a parent class rather than
+  // just a contract. Dart allows only one superclass, and Book already
+  // extends LibraryItem. implements lets Book keep LibraryItem as its
+  // superclass while supplying all Borrowable method implementations.
+}
+
+// Steps 5–10: Complete these in later checkpoints.
+
