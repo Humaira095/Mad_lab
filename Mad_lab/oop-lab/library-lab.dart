@@ -150,8 +150,7 @@ enum MemberType {
 
   const MemberType(this.maxLoans, this.discountPercent);
 
-  int applyDiscount(int fee) =>
-      fee - (fee * discountPercent ~/ 100);
+  int applyDiscount(int fee) => fee - (fee * discountPercent ~/ 100);
 }
 
 // Extension methods add convenient behaviour to existing types.
@@ -179,8 +178,7 @@ class Fine {
   bool operator >(Fine other) => amount > other.amount;
 
   @override
-  bool operator ==(Object other) =>
-      other is Fine && other.amount == amount;
+  bool operator ==(Object other) => other is Fine && other.amount == amount;
 
   @override
   int get hashCode => amount.hashCode;
@@ -229,6 +227,7 @@ void main() {
   step4();
   step5();
   step6();
+  step7();
 }
 
 void step1() {
@@ -252,9 +251,15 @@ void step2() {
 
 void step3() {
   print('--- Step 3 ---');
-  print('Step 3: Book late fee for $daysLate days = ${mainBook().lateFee(daysLate)}');
-  print('Step 3: Magazine late fee for $daysLate days = ${mainMagazine().lateFee(daysLate)}');
-  print('Step 3: Dvd late fee for $daysLate days = ${mainDvd().lateFee(daysLate)}');
+  print(
+    'Step 3: Book late fee for $daysLate days = ${mainBook().lateFee(daysLate)}',
+  );
+  print(
+    'Step 3: Magazine late fee for $daysLate days = ${mainMagazine().lateFee(daysLate)}',
+  );
+  print(
+    'Step 3: Dvd late fee for $daysLate days = ${mainDvd().lateFee(daysLate)}',
+  );
   // Think: an abstract class cannot be instantiated because it can contain
   // unimplemented methods such as lateFee(), so a concrete subclass must finish them.
 }
@@ -304,4 +309,18 @@ void step6() {
   print('Step 6: book fee $fee -> ${type.applyDiscount(fee)} after discount');
   // Think: MemberType.student is checked by Dart and cannot silently contain
   // a typo like the string 'studnet'; enum values are a fixed set of choices.
+}
+
+void step7() {
+  print('--- Step 7 ---');
+  final MemberType type = MemberType.values[seed % 3];
+  final int discountedFee = type.applyDiscount(mainBook().lateFee(daysLate));
+  final List<LibraryItem> items = [mainBook(), mainMagazine(), mainDvd()];
+  print('Step 7: ${discountedFee.rs}');
+  print('Step 7: initials of "${titles[u]}" = ${titles[u].initials}');
+  print(
+    'Step 7: shelf fee for $daysLate days = ${items.totalLateFee(daysLate).rs}',
+  );
+  // Think: extension syntax (72.rs) attaches the helper to the value and reads
+  // naturally; the extension adds convenience without changing int itself.
 }
