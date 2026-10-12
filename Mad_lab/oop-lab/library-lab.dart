@@ -229,6 +229,7 @@ void main() {
   step6();
   step7();
   step8();
+  step9();
 }
 
 void step1() {
@@ -326,7 +327,6 @@ void step7() {
   // naturally; the extension adds convenience without changing int itself.
 }
 
-
 void step8() {
   print('--- Step 8 ---');
   final Fine f1 = Fine(mainBook().lateFee(daysLate));
@@ -337,4 +337,21 @@ void step8() {
   print('Step 8: set size = ${<Fine>{f1, Fine(f1.amount), f2}.length}');
   // Think: == defines value equality, while hashCode locates values in hash
   // collections. Equal objects must have equal hash codes for Set/Map behaviour.
+}
+
+void step9() {
+  print('--- Step 9 ---');
+  LibraryItem.created = 0;
+  buildShelf();
+  final List<LibraryItem> shelf = buildShelf();
+  print('Step 9: items created = ${LibraryItem.created}');
+  print(
+    'Step 9: capped fee = ${LibraryItem.capFee(shelf.first.lateFee(daysBig))} (cap $feeCap)',
+  );
+  print(
+    'Step 9: const copies identical? ${identical(const Fine(10), const Fine(10))}',
+  );
+  print('Step 9: new copies identical? ${identical(Fine(10), Fine(10))}');
+  // Think: created is static, so it belongs to the LibraryItem class itself,
+  // not to one object; it can be read/reset through LibraryItem.created.
 }
